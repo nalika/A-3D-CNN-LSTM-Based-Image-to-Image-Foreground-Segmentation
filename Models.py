@@ -3,7 +3,8 @@
 """
 Akilan, Thangarajah @2018
 
-This is a temporary script file.
+This is a temporary script file belongs to T. Akilan, Q. J. Wu, A. Safaei, J. Huo and Y. Yang, "A 3D CNN-LSTM-Based Image-to-Image Foreground Segmentation," in IEEE Transactions on Intelligent Transportation Systems.
+URL: http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8671459&isnumber=4358928.
 """
 
 from tensorflow.python.keras.models import Model
