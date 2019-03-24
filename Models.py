@@ -3,8 +3,7 @@
 """
 Akilan, Thangarajah @2018
 
-This is a temporary script file belongs to T. Akilan, Q. J. Wu, A. Safaei, J. Huo and Y. Yang, "A 3D CNN-LSTM-Based Image-to-Image Foreground Segmentation," in IEEE Transactions on Intelligent Transportation Systems.
-URL: http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8671459&isnumber=4358928.
+This is a temporary script file.
 """
 
 from tensorflow.python.keras.models import Model
@@ -33,6 +32,20 @@ class Models:
 		return x
 
 
+	def sendec_block1(input_tensor):
+		x1 = Conv3D(filters=32, kernel_size=(1, 3, 3), strides=(1, 2, 2),
+		               activation='relu',
+		               padding='same', data_format='channels_last')(input_tensor)		 	
+		x = Conv3DTranspose(filters=16, kernel_size=(2, 3, 3), strides=(1, 2, 2), 
+			padding='same', data_format='channels_last')(x1) 
+		x = concatenate([input_tensor, x], axis=-1) 
+		x = BatchNormalization()(x)	
+		x = Conv3D(filters=16, kernel_size=(1, 3, 3), strides=(1, 1, 1), 
+			activation='relu', padding='same', data_format='channels_last')(x)
+
+		return x1, x
+
+
 
 	def _sEnDec_cnn_lstm(input_dim, dp):
 
@@ -40,37 +53,24 @@ class Models:
 		input_layer = Input(shape=input_dim)	
 		seq0 = Conv3D(filters=16, kernel_size=(1, 3, 3), strides=(1, 1, 1),
 		               activation='relu',
-		               padding='same', data_format='channels_last')(input_layer)		
-
-		seq1 = Conv3D(filters=32, kernel_size=(1, 3, 3), strides=(1, 2, 2),
-		               activation='relu',
-		               padding='same', data_format='channels_last')(seq0)  	
+		               padding='same', data_format='channels_last')(input_layer)	
 
 		# - SEnDec block 1
-		seq12 = Models.sendec_block(seq1, input_layer)
-
+		seq1, seq12 = Models.sendec_block1(seq0)
 
 		seq13 = Conv3D(filters=32, kernel_size=(1, 3, 3), strides=(1, 2, 2),
 		               activation='relu',
 		               padding='same', data_format='channels_last')(seq12)  
-		seq2 = Conv3D(filters=32, kernel_size=(1, 3, 3), strides=(1, 2, 2),
-		               activation='relu',
-		               padding='same', data_format='channels_last')(seq13) 
 		
 		# - SEnDec block 2
-		seq22 = Models.sendec_block(seq2, seq13)
-				
+		seq2, seq22 = Models.sendec_block1(seq13)				
 
 		seq22 = Conv3D(filters=32, kernel_size=(1, 3, 3), strides=(1, 2, 2),
 		               activation='relu',
-		               padding='same', data_format='channels_last')(seq22)  
-		seq30 = Conv3D(filters=32, kernel_size=(1, 3, 3), strides=(1, 2, 2),
-		               activation='relu',
-		               padding='same', data_format='channels_last')(seq22) 
+		               padding='same', data_format='channels_last')(seq22)
 		
 		# - SEnDec block 3
-		seq32 = Models.sendec_block(seq30, seq22)
-
+		seq30, seq32 = Models.sendec_block1(seq22)
 
 		seq3 = Conv3D(filters=32, kernel_size=(1, 3, 3), strides=(1, 2, 2),
 		               activation='relu',
