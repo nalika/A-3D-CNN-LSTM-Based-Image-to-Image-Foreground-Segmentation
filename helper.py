@@ -6,7 +6,7 @@ def make_5d(data, n_look_back):
 	tmp = []
 	data_5d = np.empty((n_samples-(n_look_back-1), n_look_back, data.shape[1], data.shape[2], data.shape[3]), dtype='float32')
 	
-  for i in range(0, n_samples):
+	for i in range(0, n_samples):
 		tmp = data[i:i+n_look_back]
 
 		if tmp.shape[0] == n_look_back:
